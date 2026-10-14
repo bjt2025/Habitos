@@ -68,7 +68,7 @@
          ========================================== -->
     <main id="view-daily" class="space-y-4">
 
-      <!-- Formulario de Nuevo Hábito con Categoría y Hora de Recordatorio -->
+      <!-- Formulario de Nuevo Hábito con Notificaciones -->
       <form id="habitForm" class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-3 shadow-lg">
         <div class="flex gap-2">
           <input 
@@ -86,7 +86,7 @@
           </button>
         </div>
         <div class="grid grid-cols-2 gap-2 text-xs">
-          <div class="flex items-center gap-1.5 bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg">
+          <div class="flex items-center gap-1.5 bg-slate-950 border border-slate-800 px-2.5 py-2 rounded-lg">
             <span class="text-slate-400">Área:</span>
             <select id="habitCategory" class="bg-transparent text-slate-200 focus:outline-none flex-1">
               <option value="Salud">🟢 Salud</option>
@@ -95,14 +95,21 @@
               <option value="Musica">🟣 Música</option>
             </select>
           </div>
-          <div class="flex items-center gap-1.5 bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-lg">
-            <span class="text-slate-400">Hora:</span>
-            <input 
-              type="time" 
-              id="habitTime" 
-              value="07:00" 
-              class="bg-transparent text-slate-200 focus:outline-none flex-1 text-center"
-            />
+          <div class="flex items-center justify-between bg-slate-950 border border-slate-800 px-2.5 py-2 rounded-lg">
+            <div class="flex items-center gap-1">
+              <span class="text-slate-400">Hora:</span>
+              <input 
+                type="time" 
+                id="habitTime" 
+                value="07:00" 
+                class="bg-transparent text-slate-200 focus:outline-none w-16 text-center"
+              />
+            </div>
+            <!-- Checkbox de activación en creación -->
+            <label class="flex items-center gap-1 cursor-pointer pl-1 border-l border-slate-800" title="Activar recordatorios">
+              <input type="checkbox" id="habitNotificationToggle" checked class="accent-emerald-500 w-3.5 h-3.5 rounded" />
+              <span class="text-xs">🔔</span>
+            </label>
           </div>
         </div>
       </form>
@@ -116,7 +123,7 @@
         <button onclick="setFilter('Musica')" data-cat="Musica" class="filter-pill bg-slate-900 text-slate-300 border border-slate-800 px-3.5 py-1.5 rounded-full text-xs whitespace-nowrap transition">🟣 Música</button>
       </div>
 
-      <!-- Lista de Tarjetas de Hábitos -->
+      <!-- Lista de Hábitos -->
       <div id="habitsContainer" class="space-y-3"></div>
 
     </main>
@@ -187,19 +194,28 @@
          ========================================== -->
     <main id="view-data" class="space-y-4 hidden">
       
-      <!-- Sincronización con Calendario de iOS -->
+      <!-- Panel de Notificaciones y Sincronización -->
       <div class="bg-slate-900 border border-emerald-500/30 p-5 rounded-2xl space-y-3 shadow-lg">
-        <div class="flex items-center gap-2">
-          <span class="text-xl">📅</span>
-          <div>
-            <h2 class="text-sm font-semibold text-white">Calendario de Apple (iOS)</h2>
-            <p class="text-xs text-slate-400">Genera eventos recurrentes con alarmas en tu iPhone</p>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🔔</span>
+            <div>
+              <h2 class="text-sm font-semibold text-white">Notificaciones del Sistema</h2>
+              <p class="text-xs text-slate-400">Permite avisos directos en pantalla</p>
+            </div>
           </div>
+          <button onclick="requestSystemNotifications()" class="text-xs bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1.5 rounded-lg text-emerald-400 font-medium active:scale-95 transition">
+            Autorizar
+          </button>
         </div>
-        <button onclick="exportAllToCalendarICS()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold p-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 active:scale-[0.98] transition">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          Sincronizar Todos los Hábitos (.ics)
-        </button>
+
+        <div class="pt-2 border-t border-slate-800/80">
+          <button onclick="exportAllToCalendarICS()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold p-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-500/20 active:scale-[0.98] transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Sincronizar Hábitos con Alarma (.ics)
+          </button>
+          <p class="text-[11px] text-slate-500 text-center mt-1.5">Solo se programarán alarmas para hábitos con el ícono 🔔 activo.</p>
+        </div>
       </div>
 
       <!-- Respaldo de Datos y Reportes -->
@@ -209,7 +225,7 @@
         <button onclick="exportCSV()" class="w-full flex items-center justify-between bg-slate-950 hover:bg-slate-800 border border-slate-800 p-3.5 rounded-xl text-left transition active:scale-[0.99]">
           <div>
             <p class="text-xs font-semibold text-emerald-400">Descargar Reporte en CSV (Excel)</p>
-            <p class="text-[11px] text-slate-400 mt-0.5">Estadísticas semanales y porcentajes</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Incluye estado de notificaciones y horarios</p>
           </div>
           <span class="text-base">📊</span>
         </button>
@@ -217,7 +233,7 @@
         <button onclick="exportJSON()" class="w-full flex items-center justify-between bg-slate-950 hover:bg-slate-800 border border-slate-800 p-3.5 rounded-xl text-left transition active:scale-[0.99]">
           <div>
             <p class="text-xs font-semibold text-cyan-400">Respaldo Completo en JSON</p>
-            <p class="text-[11px] text-slate-400 mt-0.5">Incluye hábitos, horas fijadas y mapa anual</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Configuraciones, hábitos y mapa anual</p>
           </div>
           <span class="text-base">💾</span>
         </button>
@@ -276,16 +292,21 @@
     };
 
     const defaultHabits = [
-      { id: 1, name: 'Agua tibia con sal de Maras y limón', category: 'Salud', time: '06:30', days: [true, true, true, true, true, false, false] },
-      { id: 2, name: 'Investigación / Automatización con Python', category: 'Ingenieria', time: '19:00', days: [true, true, false, true, true, false, false] },
-      { id: 3, name: 'Fútbol 7 / Entrenamiento físico', category: 'Deporte', time: '18:00', days: [false, true, false, true, false, true, false] },
-      { id: 4, name: 'Práctica de guitarra eléctrica (30 min)', category: 'Musica', time: '21:00', days: [true, false, true, true, true, false, false] }
+      { id: 1, name: 'Agua tibia con sal de Maras y limón', category: 'Salud', time: '06:30', notifications: true, days: [true, true, true, true, true, false, false] },
+      { id: 2, name: 'Investigación / Automatización con Python', category: 'Ingenieria', time: '19:00', notifications: true, days: [true, true, false, true, true, false, false] },
+      { id: 3, name: 'Fútbol 7 / Entrenamiento físico', category: 'Deporte', time: '18:00', notifications: false, days: [false, true, false, true, false, true, false] },
+      { id: 4, name: 'Práctica de guitarra eléctrica (30 min)', category: 'Musica', time: '21:00', notifications: true, days: [true, false, true, true, true, false, false] }
     ];
 
-    let appState = JSON.parse(localStorage.getItem('ios_habits_pro_v3')) || {
+    let appState = JSON.parse(localStorage.getItem('ios_habits_pro_v4')) || {
       habits: defaultHabits,
       heatmapHistory: generateInitialHeatmap()
     };
+
+    // Asegurar compatibilidad hacia atrás
+    appState.habits.forEach(h => {
+      if (typeof h.notifications === 'undefined') h.notifications = true;
+    });
 
     let currentFilter = 'Todas';
     let chartInstance = null;
@@ -302,7 +323,7 @@
 
     function saveState() {
       syncCurrentWeekToHeatmap();
-      localStorage.setItem('ios_habits_pro_v3', JSON.stringify(appState));
+      localStorage.setItem('ios_habits_pro_v4', JSON.stringify(appState));
     }
 
     function syncCurrentWeekToHeatmap() {
@@ -342,6 +363,16 @@
       }
     }
 
+    // Toggle de activación/desactivación de notificaciones por hábito
+    function toggleHabitNotification(habitId) {
+      const habit = appState.habits.find(h => h.id === habitId);
+      if (habit) {
+        habit.notifications = !habit.notifications;
+        saveState();
+        renderHabitsList();
+      }
+    }
+
     function updateHabitTime(habitId, newTime) {
       const habit = appState.habits.find(h => h.id === habitId);
       if (habit) {
@@ -374,14 +405,17 @@
       e.preventDefault();
       const input = document.getElementById('habitInput');
       const cat = document.getElementById('habitCategory').value;
-      const time = document.getElementById('habitTime').value || '08:00';
+      const time = document.getElementById('habitTime').value || '07:00';
+      const notifChecked = document.getElementById('habitNotificationToggle').checked;
       const name = input.value.trim();
+
       if (name) {
         appState.habits.push({
           id: Date.now(),
           name,
           category: cat,
           time: time,
+          notifications: notifChecked,
           days: [false, false, false, false, false, false, false]
         });
         input.value = '';
@@ -391,22 +425,50 @@
     });
 
     // ==========================================
-    // MOTOR DE RECORDATORIOS AUTOMÁTICOS (.ICS)
+    // NOTIFICACIONES WEB Y CALENDARIO (.ICS)
     // ==========================================
+    function requestSystemNotifications() {
+      if (!('Notification' in window)) {
+        alert('Este navegador no soporta notificaciones de escritorio o sistema.');
+        return;
+      }
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          new Notification('Mis Hábitos', {
+            body: '¡Notificaciones activadas con éxito!',
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%2310b981"/></svg>'
+          });
+        } else {
+          alert('Permiso denegado. Puedes habilitarlo en los ajustes de Safari en iOS.');
+        }
+      });
+    }
+
     function formatICSDate(date) {
       return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
     }
 
     function createSingleEventString(habit) {
-      const [hours, minutes] = (habit.time || '08:00').split(':').map(Number);
+      const [hours, minutes] = (habit.time || '07:00').split(':').map(Number);
       const start = new Date();
       start.setHours(hours, minutes, 0, 0);
-
-      const end = new Date(start.getTime() + 15 * 60000); // 15 minutos de duración
+      const end = new Date(start.getTime() + 15 * 60000);
 
       const dtStamp = formatICSDate(new Date());
       const dtStart = formatICSDate(start);
       const dtEnd = formatICSDate(end);
+
+      let alarmBlock = '';
+      // Solo incluye alarma de notificación si el hábito la tiene encendida
+      if (habit.notifications !== false) {
+        alarmBlock = [
+          'BEGIN:VALARM',
+          'TRIGGER:-PT0M',
+          'ACTION:DISPLAY',
+          `DESCRIPTION:Hora de cumplir: ${habit.name}`,
+          'END:VALARM'
+        ].join('\r\n') + '\r\n';
+      }
 
       return [
         'BEGIN:VEVENT',
@@ -416,14 +478,10 @@
         `DTEND:${dtEnd}`,
         'RRULE:FREQ=DAILY',
         `SUMMARY:🎯 Hábito: ${habit.name}`,
-        `DESCRIPTION:Recordatorio diario de objetivo (${habit.category}). Registrado en Mis Hábitos iOS.`,
-        'BEGIN:VALARM',
-        'TRIGGER:-PT0M',
-        'ACTION:DISPLAY',
-        `DESCRIPTION:Hora de cumplir: ${habit.name}`,
-        'END:VALARM',
+        `DESCRIPTION:Recordatorio diario (${habit.category}). Mis Hábitos iOS.`,
+        alarmBlock.trim(),
         'END:VEVENT'
-      ].join('\r\n');
+      ].filter(Boolean).join('\r\n');
     }
 
     function downloadICSFile(filename, icsContent) {
@@ -457,12 +515,13 @@
     }
 
     function exportAllToCalendarICS() {
-      if (appState.habits.length === 0) {
-        alert('No tienes hábitos registrados para exportar.');
+      const activeAlarmHabits = appState.habits.filter(h => h.notifications !== false);
+      if (activeAlarmHabits.length === 0) {
+        alert('No tienes hábitos con notificaciones 🔔 activadas.');
         return;
       }
 
-      const events = appState.habits.map(h => createSingleEventString(h)).join('\r\n');
+      const events = activeAlarmHabits.map(h => createSingleEventString(h)).join('\r\n');
       const calendarContent = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
@@ -473,7 +532,7 @@
         'END:VCALENDAR'
       ].join('\r\n');
 
-      downloadICSFile('todos_los_habitos.ics', calendarContent);
+      downloadICSFile('habitos_con_alarma.ics', calendarContent);
     }
 
     // ==========================================
@@ -496,6 +555,7 @@
         const style = CATEGORY_STYLES[habit.category] || CATEGORY_STYLES.Salud;
         const streak = calculateStreak(habit.days);
         const habitTime = habit.time || '07:00';
+        const hasNotif = habit.notifications !== false;
 
         let buttonsHtml = '';
         habit.days.forEach((done, idx) => {
@@ -518,28 +578,38 @@
         card.className = 'bg-slate-900 border border-slate-800 p-4 rounded-2xl space-y-3 shadow-sm';
         card.innerHTML = `
           <div class="flex items-start justify-between gap-2">
-            <div class="space-y-1 flex-1">
-              <div class="flex items-center gap-2">
+            <div class="space-y-1.5 flex-1">
+              <div class="flex items-center gap-1.5 flex-wrap">
                 <span class="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-md border ${style.badge}">
                   ${style.label}
                 </span>
-                <!-- Selector de hora y botón directo a calendario -->
-                <div class="flex items-center gap-1 bg-slate-950 border border-slate-800/80 px-2 py-0.5 rounded-md">
+
+                <!-- Control de Hora y Botón Interactivo de Notificación -->
+                <div class="flex items-center gap-1 bg-slate-950 border border-slate-800 px-2 py-0.5 rounded-md">
                   <input 
                     type="time" 
                     value="${habitTime}" 
                     onchange="updateHabitTime(${habit.id}, this.value)"
                     class="bg-transparent text-[11px] text-slate-300 focus:outline-none"
                   />
+                  <!-- Botón toggle de campana -->
+                  <button 
+                    onclick="toggleHabitNotification(${habit.id})" 
+                    class="text-xs transition active:scale-90 pl-1 border-l border-slate-800" 
+                    title="${hasNotif ? 'Notificaciones activadas (clic para desactivar)' : 'Notificaciones silenciadas (clic para activar)'}"
+                  >
+                    ${hasNotif ? '🔔' : '🔕'}
+                  </button>
                   <button 
                     onclick="exportHabitToCalendarICS(${habit.id})" 
-                    class="text-xs text-emerald-400 hover:text-emerald-300 active:scale-90 transition pl-1 border-l border-slate-800" 
-                    title="Añadir a Calendario de iOS"
+                    class="text-xs text-emerald-400 hover:text-emerald-300 active:scale-90 transition pl-0.5" 
+                    title="Exportar a Calendario"
                   >
                     📅
                   </button>
                 </div>
               </div>
+
               <h3 class="text-sm font-semibold text-slate-100 leading-snug pt-0.5">${habit.name}</h3>
             </div>
             <div class="flex items-center gap-2">
@@ -657,13 +727,14 @@
     }
 
     function exportCSV() {
-      let csv = 'ID,Habito,Categoria,Hora,Lun,Mar,Mie,Jue,Vie,Sab,Dom,Racha_Max,Porcentaje_Semanal\n';
+      let csv = 'ID,Habito,Categoria,Hora,Notificaciones,Lun,Mar,Mie,Jue,Vie,Sab,Dom,Racha_Max,Porcentaje_Semanal\n';
       appState.habits.forEach(h => {
         const streak = calculateStreak(h.days);
         const doneCount = h.days.filter(Boolean).length;
         const pct = Math.round((doneCount / 7) * 100);
         const daysStr = h.days.map(d => d ? '1' : '0').join(',');
-        csv += `${h.id},"${h.name.replace(/"/g, '""')}",${h.category},${h.time || '07:00'},${daysStr},${streak},${pct}%\n`;
+        const notifStr = h.notifications !== false ? 'SI' : 'NO';
+        csv += `${h.id},"${h.name.replace(/"/g, '""')}",${h.category},${h.time || '07:00'},${notifStr},${daysStr},${streak},${pct}%\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -716,7 +787,7 @@
 
     function factoryReset() {
       if (confirm('¿Restablecer toda la aplicación a los valores por defecto?')) {
-        localStorage.removeItem('ios_habits_pro_v3');
+        localStorage.removeItem('ios_habits_pro_v4');
         location.reload();
       }
     }
